@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Edit Contact</title>
+</head>
+
+<body>
+    <div id="avatarImage"></div>
+
+    <form id="editForm">
+        <label for="firstname">First Name</label>
+        <input type="text" name="firstname" id="firstname" readonly /><br />
+
+        <label for="lastname">Last Name</label>
+        <input type="text" name="lastname" id="lastname" readonly /><br />
+
+        <label for="mobile">Mobile</label>
+        <input type="text" name="mobile" id="mobile" readonly /><br />
+
+        <label for="email">Email</label>
+        <input type="text" name="email" id="email" readonly /><br />
+
+        <label for="avatar" id="avatarLabel" hidden>Change Image</label><br />
+        <input type="file" name="avatar" id="avatar" hidden /><br />
+
+        <button id="editContact" type="button">Edit</button>
+        <button id="deleteContact" type="button">Delete</button>
+        <button type="submit" id="submitForm">Save Changes</button>
+    </form>
+
+    <br />
+    <button id="homeLink" type="button">Home</button>
+
+    <script src="config.js"></script>
+    <script>
+        const id = new URLSearchParams(window.location.search).get("id");
+
+        document.getElementById("editForm").addEventListener("submit", submitEditForm);
+        document.getElementById("homeLink").addEventListener("click", homeLink);
+        document.getElementById("editContact").addEventListener("click", enableEditing);
+        document.getElementById("deleteContact").addEventListener("click", deleteContact);
+
+        // Load contact on page load
+        getContact();
+
+        function getContact() {
+            fetch(rootPath + "controller/get-contacts/?id=" + id)
+                .then((res) => res.json())
+                .then((data) => {
+                    if (!data || data.length === 0) {
+                        alert("Contact not found.");
+                        return;
+                    }
+                    displayContact(data[0]);
+                })
+                .catch((err) => console.error("Error fetching contact:", err));
+        }
+
+        function displayContact(contact) {
+            document.getElementById("avatarImage").innerHTML = `
+              <img src="${rootPath}controller/uploads/${contact.avatar}" width="200" />`;
+
+            document.getElementById("firstname").value = contact.firstname;
+            document.getElementById("lastname").value = contact.lastname;
+            document.getElementById("mobile").value = contact.mobile;
+            document.getElementById("email").value = contact.email;
+        }
+
+        function enableEditing() {
+            document.getElementById("firstname").readOnly = false;
+            document.getElementById("lastname").readOnly = false;
+            document.getElementById("mobile").readOnly = false;
+            document.getElementById("email").readOnly = false;
+            document.getElementById("avatar").hidden = false;
+            document.getElementById("avatarLabel").hidden = false;
+        }
+
+        function submitEditForm(e) {
+            e.preventDefault();
+
+            const form = new FormData(document.querySelector("#editForm"));
+            form.append("apiKey", apiKey);
+            form.append("id", id);
+
+            fetch(rootPath + "controller/edit-contact/", {
+                method: "POST",
+                headers: { Accept: "application/json, *.*" },
+                body: form,
+            })
+                .then((response) => response.text())
+                .then((data) => {
+                    if (data === "1") {
+                        alert("Contact Edited.");
+                        homeLink();
+                    } else {
+                        alert("Error: " + data);
+                    }
+                })
+                .catch((err) => {
+                    alert("Failed to edit contact.");
+                    console.error(err);
+                });
+        }
+
+        function homeLink() {
+            window.open("index.html", "_self");
+        }
+
+        //Function to delete contact
+        function deleteContact() {
+            var confirmDelete = confirm("Delete contact. Are you sure?")
+
+            if (confirmDelete == true) {
+                fetch(rootPath + 'controller/delete-contact/?id=' + id)
+                    .then(function (response) {
+                        return response.text(); // ✅ Add return
+                    })
+                    .then(function (data) {
+                        if (data == "1") {
+                            homeLink();
+                        } else {
+                            alert(data); // Now this will show the actual error if any
+                        }
+                    });
+
+            }
+        }
+    </script>
+</body>
+</html>
