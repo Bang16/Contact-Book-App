@@ -34,6 +34,7 @@
 
     <script src="config.js"></script>
     <script>
+        //Get the id from the URL
         const id = new URLSearchParams(window.location.search).get("id");
 
         document.getElementById("editForm").addEventListener("submit", submitEditForm);
@@ -44,6 +45,7 @@
         // Load contact on page load
         getContact();
 
+        //Function to get contact details
         function getContact() {
             fetch(rootPath + "controller/get-contacts/?id=" + id)
                 .then((res) => res.json())
@@ -57,6 +59,7 @@
                 .catch((err) => console.error("Error fetching contact:", err));
         }
 
+        //FUnction to display contact details
         function displayContact(contact) {
             document.getElementById("avatarImage").innerHTML = `
               <img src="${rootPath}controller/uploads/${contact.avatar}" width="200" />`;
@@ -67,6 +70,7 @@
             document.getElementById("email").value = contact.email;
         }
 
+        //Function to enable editing
         function enableEditing() {
             document.getElementById("firstname").readOnly = false;
             document.getElementById("lastname").readOnly = false;
@@ -76,6 +80,7 @@
             document.getElementById("avatarLabel").hidden = false;
         }
 
+        //Function to submit the form after editing
         function submitEditForm(e) {
             e.preventDefault();
 
