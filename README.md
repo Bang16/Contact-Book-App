@@ -25,5 +25,8 @@ https://github.com/Bang16/Contact-Book-App.git
 - Search functionality
 - Backend intergration for persistant data
 
+##NOTE:
+- This project requires an API key. Contact me for details.
+
 #Authhor
 Thabang Matlebyane
