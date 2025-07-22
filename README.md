@@ -1,4 +1,4 @@
-#Calculator App
+#Contact Book App
 
 #Description
 A simple contact management app that allows users to add, edit, view and delete contacts. This is a practice project to strengthen JavaScript and DOM manipulation skills.
